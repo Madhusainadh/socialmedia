@@ -4,7 +4,7 @@ import { useHistory,Redirect } from "react-router-dom";
 const ChatContext = createContext();
 
 const ChatProvider = ({ children }) => {
-  const [selectedChat, setSelectedChat] = useState();
+  const [selectedChat, setSelectedChat] = useState(false);
   const [user, setUser] = useState();
   const [notification, setNotification] = useState([]);
   const [chats, setChats] = useState([]);
@@ -18,7 +18,7 @@ const ChatProvider = ({ children }) => {
     if (!userInfo) {<Redirect to={"/"} />}//history.push("/");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
-  
+   
 
   return (
     <ChatContext.Provider
