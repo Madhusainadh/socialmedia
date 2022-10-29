@@ -32,6 +32,8 @@ import { Effect } from "react-notification-badge";
 // import UserListItem from "../userAvatar/UserListItem";
 import { ChatState } from "../../context/ChatProvider";
 import ProfileModal from "./ProfileModel";
+import ChatLoading from "../ChatLoading";
+import UserListItem from "../UserAvatar/UserListilems";
 
 function SideDrawer() {
   const [search, setSearch] = useState("");
@@ -55,9 +57,11 @@ function SideDrawer() {
   const logoutHandler = () => {
     localStorage.removeItem("userInfo");
     history.push("/");
+
   };
 
   const handleSearch = async () => {
+    
     if (!search) {
       toast({
         title: "Please Enter something in search",
@@ -78,10 +82,11 @@ function SideDrawer() {
         },
       };
 
-      const { data } = await axios.get(`/api/user?search=${search}`, config);
+      const { data } = await axios.get(`http://localhost:5000/api/user?search=${search}`, config);
 
+      console.log(data)
       setLoading(false);
-      setSearchResult(data);
+      setSearchResult(data.users);
     } catch (error) {
       toast({
         title: "Error Occured!",
@@ -96,17 +101,17 @@ function SideDrawer() {
 
   const accessChat = async (userId) => {
     console.log(userId);
-
     try {
       setLoadingChat(true);
       const config = {
         headers: {
-          "Content-type": "application/json",
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.post(`/api/chat`, { userId }, config);
-
+      const { data } = await axios.post(`http://localhost:5000/api/chat`,
+       { userId },
+        config);
+   console.log(data)
       if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
       setSelectedChat(data);
       setLoadingChat(false);
@@ -184,7 +189,7 @@ function SideDrawer() {
             </MenuButton>
             <MenuList>
               <ProfileModal user={user}>
-                <MenuItem>My Profile</MenuItem>{" "}
+                <MenuItem>My Profile</MenuItem>
               </ProfileModal>
               <MenuDivider />
               <MenuItem onClick={logoutHandler}>Logout</MenuItem>
@@ -209,17 +214,16 @@ function SideDrawer() {
               <Button onClick={handleSearch}>Go</Button>
             </Box>
             {loading
-              ? {
-                  /*<ChatLoading /> */
-                }
+              ? 
+                 <ChatLoading /> 
+                
               : searchResult?.map(
-                  (user) =>
-                    "madhusaiandh"
-                    // <UserListItem
-                    //   key={user._id}
-                    //   user={user}
-                    //   handleFunction={() => accessChat(user._id)}
-                    // />
+                  (user) => 
+                    <UserListItem
+                      key={user._id}
+                      user={user}
+                      handleFunction={() => accessChat(user._id)}
+                    />
                 )}
             {loadingChat && <Spinner ml="auto" d="flex" />}
           </DrawerBody>

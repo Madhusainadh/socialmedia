@@ -11,7 +11,7 @@ const Homepage = () => {
 useEffect(()=>{
   const userInfo = JSON.parse(localStorage.getItem("userInfo"))
 
-  if(!userInfo){
+  if(userInfo){
     history.push("/chats")
   }
 },[history])

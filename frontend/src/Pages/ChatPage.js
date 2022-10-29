@@ -16,6 +16,7 @@ export const ChatPage = () => {
     {/* {user && <SideDrawer/>} */}
  
     {user && <SideDrawer/>}
+    {user&&<MyChats/>}
  {/*} {user&&<MyChats/>}*/}
  {/*} {user&&<ChatBox/>}*/}
  
