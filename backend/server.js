@@ -3,6 +3,7 @@ const { chats } = require("./data/data");
 const mongoose = require("mongoose");
 const connectDB = require("./config/db");
 const cors = require("cors");
+const path = require("path")
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("../backend/routes/chatRoutes");
 const messageRoutes = require("../backend/routes/messageRoutes");
@@ -20,6 +21,22 @@ app.use(express.json());
 app.use("/api/user/", userRoutes);
 app.use("/api/chat/", chatRoutes);
 app.use("/api/message", messageRoutes);
+
+//------------------------deployment-------------------
+
+const __dirname1 = path.resolve();
+if(process.env.NODE_ENV==="production"){
+
+  app.use(express.static(path.join(__dirname1,"./frontend/build")))
+}else{
+  app.get("/",(req,res)=>{
+    req.send("API is running Successfully")
+  })
+}
+
+
+//------------------------deployment-------------------
+
 
 app.use(notFound);
 app.use(errorHandler);
@@ -46,8 +63,8 @@ io.on("connection", (socket) => {
     console.log("user joined room:" + room);
   });
 
-  socket.on("typing",(room)=>socket.in(room).emit("typing"))
-  socket.on("stop typing",(room)=>socket.in(room).emit("stop typing"))
+  socket.on("typing", (room) => socket.in(room).emit("typing"));
+  socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
 
   socket.on("new message", (newMessageRecieved) => {
     var chat = newMessageRecieved.chat;
@@ -60,10 +77,8 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.off("setup",()=>{
+  socket.off("setup", () => {
     console.log("User disconnected");
-    socket.leave(userData._id)
-  })
-
-
+    socket.leave(userData._id);
+  });
 });

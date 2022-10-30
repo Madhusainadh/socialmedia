@@ -28,7 +28,7 @@ import { Spinner } from "@chakra-ui/spinner";
 // import ProfileModal from "./ProfileModal";
 import NotificationBadge from "react-notification-badge";
 import { Effect } from "react-notification-badge";
-// import { getSender } from "../../config/ChatLogics";
+import { getSender } from "../../config/Chatlogics";
 // import UserListItem from "../userAvatar/UserListItem";
 import { ChatState } from "../../context/ChatProvider";
 import ProfileModal from "./ProfileModel";
@@ -40,7 +40,7 @@ function SideDrawer() {
   const [searchResult, setSearchResult] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
-
+ 
   const {
     setSelectedChat,
     user,
@@ -49,7 +49,7 @@ function SideDrawer() {
     chats,
     setChats,
   } = ChatState();
-
+ 
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const history = useHistory();
@@ -172,7 +172,7 @@ function SideDrawer() {
                   {
                     notif.chat.isGroupChat
                       ? `New Message in ${notif.chat.chatName}`
-                      : "" //`New Message from ${getSender(user, notif.chat.users)}`
+                      :`New Message from ${getSender(user, notif.chat.users)}`
                   }
                 </MenuItem>
               ))}
