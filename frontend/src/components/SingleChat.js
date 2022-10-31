@@ -9,7 +9,7 @@ import UpdateGroupChatModal from "../components/miscellaneous/UpdateGroupChatMod
 import axios from "axios";
 import "./styles.css";
 import animationData from "../animation/typing.json";
-import Lottie from "react-lottie"
+import Lottie from "react-lottie";
 import ScrollableChat from "./scrollableChat";
 import io from "socket.io-client";
 const ENDPOINT = "http://localhost:5000";
@@ -25,7 +25,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [istyping, setIsTyping] = useState(false);
   const toast = useToast();
 
-
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -35,10 +34,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     },
   };
 
-
-  const { user, selectedChat, setSelectedChat ,notification,setNotification} = ChatState();
-
- 
+  const { user, selectedChat, setSelectedChat, notification, setNotification } =
+    ChatState();
 
   const fetchMessages = async () => {
     if (!selectedChat) return;
@@ -96,9 +93,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         setNewMessage("");
         socket.emit("new message", data);
         setMessages([...messages, data]);
-        setTimeout(() => {
-          fetchMessages();
-        }, 5000);
       } catch (error) {
         toast({
           title: "Error Occured!",
@@ -146,18 +140,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     fetchMessages();
     selectedChatCompare = selectedChat;
   }, [selectedChat]);
-console.log(notification,"------------------------")
+  console.log(notification, "------------------------");
   useEffect(() => {
     socket.on("message recievied", (newMessageRecieved) => {
       if (
         !selectedChatCompare ||
         selectedChatCompare._id !== newMessageRecieved.chat._id
       ) {
-    if(!notification.includes(newMessageRecieved)){
-      setNotification([newMessageRecieved,...notification]);
-      setFetchAgain(!fetchAgain)
-      
-    }
+        if (!notification.includes(newMessageRecieved)) {
+          setNotification([newMessageRecieved, ...notification]);
+          setFetchAgain(!fetchAgain);
+        }
       } else {
         setMessages([...messages, newMessageRecieved]);
       }
@@ -168,7 +161,7 @@ console.log(notification,"------------------------")
     <>
       {selectedChat ? (
         <>
-          <Text
+          <Box
             fontSize={{ base: "28px", md: "30px" }}
             pb={3}
             px={2}
@@ -178,13 +171,15 @@ console.log(notification,"------------------------")
             // justifyContent={"center"}
             justifyContent={{ base: "space-between" }}
             alignItems="center"
+            
           >
             <IconButton
               d={{ base: "flex", md: "none" }}
               icon={<ArrowBackIcon />}
               onClick={() => setSelectedChat("")}
             />
-            {1 &&
+           
+            {messages &&
               (!selectedChat.isGroupChat ? (
                 <>
                   {getSender(user, selectedChat.users)}
@@ -202,7 +197,8 @@ console.log(notification,"------------------------")
                   />
                 </>
               ))}
-          </Text>
+             
+          </Box>
           <Box
             display="flex"
             flexDir={"column"}
@@ -229,12 +225,17 @@ console.log(notification,"------------------------")
             )}
 
             <FormControl onKeyDown={sendMessage} isRequired mt={3}>
-              {istyping ? <div>
-                <Lottie
-                options={defaultOptions}
-                width={70}
-                stying={{marginBotton:15,marginLeft:0}}
-                /></div> : <></>}
+              {istyping ? (
+                <div>
+                  <Lottie
+                    options={defaultOptions}
+                    width={70}
+                    stying={{ marginBotton: 15, marginLeft: 0 }}
+                  />
+                </div>
+              ) : (
+                <></>
+              )}
               <Input
                 variant={"filled"}
                 bg="#E0E0E0"
