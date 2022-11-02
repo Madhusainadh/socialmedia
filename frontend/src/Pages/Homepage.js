@@ -17,7 +17,7 @@ useEffect(()=>{
 },[history])
 
   return (
-    <Container style={{opacity: 0.6}} maxW={"xl"} centerContent>
+    <Container  maxW={"xl"} centerContent>
       <Box
         display="flex"
         justifyContent={"center"}

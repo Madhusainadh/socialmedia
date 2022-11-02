@@ -9,16 +9,19 @@ import { AddIcon } from "@chakra-ui/icons";
 import { getSender } from '../config/Chatlogics';
 import GroupChatModal from './miscellaneous/GroupChatModal';
 
-const MyChats = ({fetchAgain}) => {
+const MyChats =  ({fetchAgain}) => {
   const [loggedUser, setLoggedUser] = useState();
-
-  const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
+const [loading,setloading] = useState(false)
+   const { selectedChat, setSelectedChat, user, chats, setChats } =  ChatState();
  
+
+
 
   const toast = useToast();
 
   const fetchChats = async () => {
     // console.log(user._id);
+    setloading(true)
     try {
       const config = {
         headers: {
@@ -29,7 +32,11 @@ const MyChats = ({fetchAgain}) => {
       const { data } = await axios.get("http://localhost:5000/api/chat", config);
       setChats(data);
       console.log(chats)
+      setTimeout(() => {
+        setloading(false)
+      }, 2000);
     } catch (error) {
+      setloading(false)
       toast({
         title: "Error Occured!",
         description: "Failed to Load the chats",
@@ -37,7 +44,7 @@ const MyChats = ({fetchAgain}) => {
         duration: 5000,
         isClosable: true,
         position: "bottom-left",
-      });
+      });   
     }
   };
   
@@ -46,6 +53,7 @@ const MyChats = ({fetchAgain}) => {
     fetchChats();
     // eslint-disable-next-line
   }, [fetchAgain]);
+  console.log(chats)
 
   return (
     <Box
@@ -57,8 +65,10 @@ const MyChats = ({fetchAgain}) => {
     w={{ base: "100%", md: "31%" }}
     borderRadius="lg"
     borderWidth="1px"
-  >
-  <Box
+     >
+  {loading ? <Box> loading</Box> : 
+  <>
+    <Box
         pb={3}
         px={3}
         fontSize={{ base: "28px", md: "30px" }}
@@ -104,11 +114,13 @@ const MyChats = ({fetchAgain}) => {
                 borderRadius="lg"
                 key={chat._id}
               >
-                <Text>
-                  {!chat.isGroupChat
-                    ? getSender(loggedUser, chat.users)
-                    : chat.chatName}
-                </Text>
+             
+              <Text>
+              {!chat.isGroupChat
+                 ? 
+                 getSender(user?user:loggedUser, chat.users)
+                : chat.chatName}
+            </Text>
                 {chat.latestMessage && (
                   <Text fontSize="xs">
                     <b>{chat.latestMessage.sender.name} : </b>
@@ -125,6 +137,8 @@ const MyChats = ({fetchAgain}) => {
        
         )}
       </Box>
+      </>
+        }
   </Box>
   )
 }

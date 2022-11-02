@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -12,6 +12,9 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
+import {GoogleLogin, GoogleOAuthProvider} from "@react-oauth/google"
+import jwt_decode from "jwt-decode";
+
 
 const Login = () => {
   const [show, setshow] = useState(false);
@@ -21,6 +24,36 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const history = useHistory();
+
+{/**
+import { GoogleLogin } from '@react-oauth/google';
+
+<GoogleLogin
+  onSuccess={credentialResponse => {
+    console.log(credentialResponse);
+  }}
+  onError={() => {
+    console.log('Login Failed');
+  }}
+/>;
+  function handleCallbackResponse(res){
+    console.log(res.credential)
+    }
+         useEffect(()=>{
+          google.accounts.id.initialize({
+            client_id:"896251704494-8jkcgc6o32ni97rkd3bv1em9b24ikj2u.apps.googleusercontent.com",
+            callback:handleCallbackResponse
+          })
+    
+    
+          google.accounts.id.renderButton(
+            document.getElementById("signInDiv"),
+            {theme:"outline",size:"large"}
+          )
+    
+    
+         },[])
+          */}
 
   const submitHandler = async () => {
     setLoading(true);
@@ -39,7 +72,6 @@ const Login = () => {
     // console.log(email, password);
     try {
     
-
       const { data } = await axios.post(
         "http://localhost:5000/api/user/login",
         { email, password },
@@ -55,8 +87,12 @@ const Login = () => {
         position: "bottom",
       });
       localStorage.setItem("userInfo", JSON.stringify(data));
-      setLoading(false);
-      history.push("/chats");
+      
+      setTimeout(()=>{
+        history.push("/chats");
+        setLoading(false);
+      },4000)
+      
     } catch (error) {
       toast({
         title: "Error Occured!",
@@ -71,7 +107,9 @@ const Login = () => {
   };
 
   return (
+ 
     <Box>
+    {loading? <Box> loading</Box> : 
       <VStack spacing={"5px"}>
         <FormControl id="email" isRequired>
           <FormLabel>email</FormLabel>
@@ -106,21 +144,21 @@ const Login = () => {
         >
           Login
         </Button>
-        <Button
-          isLoading={loading}
-          variant={"solid"}
-          colorScheme={"red"}
-          width="100%"
-          style={{ marginTop: 15 }}
-          onClick={() => {
-            setemail("guset@example.com");
-            setpassword("12345678");
-          }}
-        >
-          Guest Login
-        </Button>
+        <GoogleLogin
+        onSuccess={credentialResponse => {
+          let token=(credentialResponse.credential);
+         var decode = jwt_decode(token)
+console.log(decode)
+        }}
+        onError={() => {
+          console.log('Login Failed');
+        }}
+      />;
       </VStack>
+    }
     </Box>
+      
+  
   );
 };
 
